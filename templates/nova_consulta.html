@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Consulta - Sistema de Consultas Médicas{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Agendar Nova Consulta</h1>
+    <p class="mt-2 text-sm text-gray-600">Preencha os dados da consulta médica</p>
+</div>
+
+<div class="bg-white shadow-lg rounded-lg overflow-hidden max-w-3xl">
+    <form action="{{ url_for('nova_consulta') }}" method="POST" class="p-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Paciente -->
+            <div class="md:col-span-2">
+                <label for="paciente_id" class="block text-sm font-medium text-gray-700 mb-2">
+                    Paciente <span class="text-red-500">*</span>
+                </label>
+                <select name="paciente_id" id="paciente_id" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    <option value="">Selecione um paciente</option>
+                    {% for paciente in pacientes %}
+                    <option value="{{ paciente.id }}">{{ paciente.nome }} - CPF: {{ paciente.cpf }}</option>
+                    {% endfor %}
+                </select>
+                {% if not pacientes %}
+                <p class="mt-2 text-sm text-red-600">
+                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                    Nenhum paciente cadastrado. <a href="{{ url_for('novo_paciente') }}" class="underline">Cadastre um paciente primeiro</a>.
+                </p>
+                {% endif %}
+            </div>
+
+            <!-- Data da Consulta -->
+            <div>
+                <label for="data_consulta" class="block text-sm font-medium text-gray-700 mb-2">
+                    Data da Consulta <span class="text-red-500">*</span>
+                </label>
+                <input type="date" name="data_consulta" id="data_consulta" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+            </div>
+
+            <!-- Hora da Consulta -->
+            <div>
+                <label for="hora_consulta" class="block text-sm font-medium text-gray-700 mb-2">
+                    Hora da Consulta <span class="text-red-500">*</span>
+                </label>
+                <input type="time" name="hora_consulta" id="hora_consulta" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+            </div>
+
+            <!-- Médico -->
+            <div>
+                <label for="medico" class="block text-sm font-medium text-gray-700 mb-2">
+                    Nome do Médico <span class="text-red-500">*</span>
+                </label>
+                <input type="text" name="medico" id="medico" required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="Dr. João Silva">
+            </div>
+
+            <!-- Especialidade -->
+            <div>
+                <label for="especialidade" class="block text-sm font-medium text-gray-700 mb-2">
+                    Especialidade
+                </label>
+                <input type="text" name="especialidade" id="especialidade"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="Cardiologia, Dermatologia, etc.">
+            </div>
+
+            <!-- Observações -->
+            <div class="md:col-span-2">
+                <label for="observacoes" class="block text-sm font-medium text-gray-700 mb-2">
+                    Observações
+                </label>
+                <textarea name="observacoes" id="observacoes" rows="4"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="Informações adicionais sobre a consulta..."></textarea>
+            </div>
+        </div>
+
+        <!-- Botões -->
+        <div class="mt-8 flex justify-end space-x-4">
+            <a href="{{ url_for('consultas') }}" 
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-200">
+                Cancelar
+            </a>
+            <button type="submit" 
+                class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200">
+                <i class="fas fa-calendar-check mr-2"></i> Agendar Consulta
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Define data mínima como hoje
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('data_consulta').setAttribute('min', hoje);
+</script>
+{% endblock %}

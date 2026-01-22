@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Paciente - Sistema de Consultas Médicas{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Editar Paciente</h1>
+    <p class="mt-2 text-sm text-gray-600">Atualize os dados do paciente</p>
+</div>
+
+<div class="bg-white shadow-lg rounded-lg overflow-hidden max-w-3xl">
+    <form action="{{ url_for('editar_paciente', id=paciente.id) }}" method="POST" class="p-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Nome -->
+            <div class="md:col-span-2">
+                <label for="nome" class="block text-sm font-medium text-gray-700 mb-2">
+                    Nome Completo <span class="text-red-500">*</span>
+                </label>
+                <input type="text" name="nome" id="nome" required value="{{ paciente.nome }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <!-- CPF -->
+            <div>
+                <label for="cpf" class="block text-sm font-medium text-gray-700 mb-2">
+                    CPF <span class="text-red-500">*</span>
+                </label>
+                <input type="text" name="cpf" id="cpf" required value="{{ paciente.cpf }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    maxlength="14">
+            </div>
+
+            <!-- Data de Nascimento -->
+            <div>
+                <label for="data_nascimento" class="block text-sm font-medium text-gray-700 mb-2">
+                    Data de Nascimento
+                </label>
+                <input type="date" name="data_nascimento" id="data_nascimento"
+                    value="{{ paciente.data_nascimento.strftime('%Y-%m-%d') if paciente.data_nascimento else '' }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <!-- Telefone -->
+            <div>
+                <label for="telefone" class="block text-sm font-medium text-gray-700 mb-2">
+                    Telefone
+                </label>
+                <input type="text" name="telefone" id="telefone" value="{{ paciente.telefone or '' }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                </label>
+                <input type="email" name="email" id="email" value="{{ paciente.email or '' }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <!-- Endereço -->
+            <div class="md:col-span-2">
+                <label for="endereco" class="block text-sm font-medium text-gray-700 mb-2">
+                    Endereço Completo
+                </label>
+                <textarea name="endereco" id="endereco" rows="3"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">{{ paciente.endereco or '' }}</textarea>
+            </div>
+        </div>
+
+        <!-- Botões -->
+        <div class="mt-8 flex justify-end space-x-4">
+            <a href="{{ url_for('pacientes') }}" 
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg transition duration-200">
+                Cancelar
+            </a>
+            <button type="submit" 
+                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200">
+                <i class="fas fa-save mr-2"></i> Atualizar Paciente
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Máscara para CPF
+    document.getElementById('cpf').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length <= 11) {
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = value;
+        }
+    });
+
+    // Máscara para Telefone
+    document.getElementById('telefone').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length <= 11) {
+            value = value.replace(/(\d{2})(\d)/, '($1) $2');
+            value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            e.target.value = value;
+        }
+    });
+</script>
+{% endblock %}

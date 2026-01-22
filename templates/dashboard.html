@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Sistema de Consultas Médicas{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Dashboard de Análises</h1>
+    <p class="mt-2 text-sm text-gray-600">Visualize dashboards e relatórios analíticos</p>
+</div>
+
+<div class="bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="p-8">
+        <div class="mb-6">
+            <label for="dashboard-url" class="block text-sm font-medium text-gray-700 mb-2">
+                URL do Dashboard (iframe)
+            </label>
+            <div class="flex gap-4">
+                <input type="text" id="dashboard-url" 
+                    placeholder="Cole aqui a URL do seu dashboard (ex: https://app.powerbi.com/...)"
+                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <button onclick="loadDashboard()" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200">
+                    <i class="fas fa-sync-alt mr-2"></i> Carregar
+                </button>
+            </div>
+            <p class="mt-2 text-sm text-gray-500">
+                <i class="fas fa-info-circle mr-1"></i>
+                Insira a URL de embed de dashboards como Power BI, Tableau, Looker, Metabase, etc.
+            </p>
+        </div>
+
+        <!-- Container do iframe -->
+        <div id="dashboard-container" class="border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 flex items-center justify-center" style="min-height: 600px;">
+            <div id="placeholder" class="text-center p-12">
+                <i class="fas fa-chart-bar text-gray-400 text-6xl mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Dashboard não configurado</h3>
+                <p class="text-gray-500 mb-4">
+                    Insira a URL do seu dashboard no campo acima e clique em "Carregar"
+                </p>
+                <div class="mt-6 text-left max-w-xl mx-auto bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 class="font-semibold text-blue-900 mb-2">
+                        <i class="fas fa-lightbulb mr-2"></i>Exemplos de dashboards compatíveis:
+                    </h4>
+                    <ul class="text-sm text-blue-800 space-y-1">
+                        <li><i class="fas fa-check mr-2"></i>Microsoft Power BI</li>
+                        <li><i class="fas fa-check mr-2"></i>Tableau</li>
+                        <li><i class="fas fa-check mr-2"></i>Google Data Studio / Looker Studio</li>
+                        <li><i class="fas fa-check mr-2"></i>Metabase</li>
+                        <li><i class="fas fa-check mr-2"></i>Apache Superset</li>
+                        <li><i class="fas fa-check mr-2"></i>Grafana</li>
+                    </ul>
+                </div>
+            </div>
+            <iframe id="dashboard-iframe" class="hidden w-full rounded-lg" style="height: 600px;" frameborder="0" allowfullscreen></iframe>
+        </div>
+
+        <!-- Instruções -->
+        <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-exclamation-triangle text-yellow-400 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-yellow-800">Instruções Importantes</h3>
+                    <div class="mt-2 text-sm text-yellow-700">
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>Certifique-se de que o dashboard permite incorporação via iframe</li>
+                            <li>Alguns serviços requerem configurações de segurança específicas (CORS)</li>
+                            <li>A URL deve ser a versão de "embed" ou "incorporação" do dashboard</li>
+                            <li>Para Power BI, use "Arquivo > Inserir relatório > Site ou portal"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadDashboard() {
+        const url = document.getElementById('dashboard-url').value.trim();
+        const iframe = document.getElementById('dashboard-iframe');
+        const placeholder = document.getElementById('placeholder');
+        
+        if (!url) {
+            alert('Por favor, insira uma URL válida');
+            return;
+        }
+        
+        // Valida se é uma URL válida
+        try {
+            new URL(url);
+        } catch (e) {
+            alert('URL inválida. Por favor, insira uma URL completa (começando com http:// ou https://)');
+            return;
+        }
+        
+        // Carrega o iframe
+        iframe.src = url;
+        iframe.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+        
+        // Salva no localStorage
+        localStorage.setItem('dashboard-url', url);
+        
+        // Feedback visual
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check mr-2"></i> Carregado!';
+        button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+        button.classList.add('bg-green-600');
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.classList.remove('bg-green-600');
+            button.classList.add('bg-blue-600', 'hover:bg-blue-700');
+        }, 2000);
+    }
+    
+    // Carrega URL salva ao carregar a página
+    window.addEventListener('DOMContentLoaded', function() {
+        const savedUrl = localStorage.getItem('dashboard-url');
+        if (savedUrl) {
+            document.getElementById('dashboard-url').value = savedUrl;
+            // Opcional: carregar automaticamente
+            // loadDashboard();
+        }
+    });
+    
+    // Permite carregar ao pressionar Enter
+    document.getElementById('dashboard-url').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            loadDashboard();
+        }
+    });
+</script>
+{% endblock %}

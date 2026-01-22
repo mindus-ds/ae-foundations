@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Sistema de Consultas Médicas{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+    <p class="mt-2 text-sm text-gray-600">Visão geral do sistema de consultas médicas</p>
+</div>
+
+<!-- Estatísticas -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <!-- Total de Pacientes -->
+    <div class="bg-white overflow-hidden shadow-lg rounded-lg card-hover">
+        <div class="p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0 bg-blue-500 rounded-md p-3">
+                    <i class="fas fa-users text-white text-2xl"></i>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Total de Pacientes</dt>
+                        <dd class="text-3xl font-bold text-gray-900">{{ total_pacientes }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-50 px-6 py-3">
+            <a href="{{ url_for('pacientes') }}" class="text-sm font-medium text-blue-600 hover:text-blue-500">
+                Ver todos <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Total de Consultas -->
+    <div class="bg-white overflow-hidden shadow-lg rounded-lg card-hover">
+        <div class="p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
+                    <i class="fas fa-calendar-alt text-white text-2xl"></i>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Total de Consultas</dt>
+                        <dd class="text-3xl font-bold text-gray-900">{{ total_consultas }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-50 px-6 py-3">
+            <a href="{{ url_for('consultas') }}" class="text-sm font-medium text-green-600 hover:text-green-500">
+                Ver todas <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Consultas Agendadas -->
+    <div class="bg-white overflow-hidden shadow-lg rounded-lg card-hover">
+        <div class="p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0 bg-purple-500 rounded-md p-3">
+                    <i class="fas fa-clock text-white text-2xl"></i>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Consultas Agendadas</dt>
+                        <dd class="text-3xl font-bold text-gray-900">{{ consultas_agendadas }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-50 px-6 py-3">
+            <a href="{{ url_for('nova_consulta') }}" class="text-sm font-medium text-purple-600 hover:text-purple-500">
+                Agendar nova <i class="fas fa-plus ml-1"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Ações Rápidas -->
+<div class="mb-8">
+    <h2 class="text-2xl font-bold text-gray-900 mb-4">Ações Rápidas</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <a href="{{ url_for('novo_paciente') }}" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500">
+            <div class="flex items-center">
+                <i class="fas fa-user-plus text-blue-500 text-3xl mr-4"></i>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Cadastrar Novo Paciente</h3>
+                    <p class="text-sm text-gray-600">Adicione um novo paciente ao sistema</p>
+                </div>
+            </div>
+        </a>
+        
+        <a href="{{ url_for('nova_consulta') }}" class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-green-500">
+            <div class="flex items-center">
+                <i class="fas fa-calendar-plus text-green-500 text-3xl mr-4"></i>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Agendar Consulta</h3>
+                    <p class="text-sm text-gray-600">Marque uma nova consulta médica</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Últimas Consultas -->
+{% if ultimas_consultas %}
+<div class="bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+        <h2 class="text-xl font-bold text-gray-900">Últimas Consultas Agendadas</h2>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Paciente</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hora</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Médico</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for consulta in ultimas_consultas %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ consulta.paciente.nome }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ consulta.data_consulta.strftime('%d/%m/%Y') }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ consulta.hora_consulta.strftime('%H:%M') }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ consulta.medico }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            {% if consulta.status == 'Agendada' %}bg-yellow-100 text-yellow-800
+                            {% elif consulta.status == 'Realizada' %}bg-green-100 text-green-800
+                            {% else %}bg-red-100 text-red-800{% endif %}">
+                            {{ consulta.status }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
