@@ -1,5 +1,5 @@
 """
-Configuração de conexão com o banco de dados
+Configuração de conexão com o banco de dados teste commit
 """
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
